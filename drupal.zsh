@@ -1,24 +1,13 @@
 # Drupal && Drush related commands
 
-drushit() 
+proxify() 
 {
-	drush en -y adminimal_admin_menu
-	drush en -y environment_indicator
-	drush vset environment_indicator_git_support false
-	drush en -y token_tweaks
 	if [ ! -z $1 ]; then
 		drush en -y stage_file_proxy
 		drush vset stage_file_proxy_origin "$1"
-		drush vset stage_file_proxy_hotlink true
-		drush vset stage_file_proxy_use_imagecache_root false
+		drush vset stage_file_proxy_hotlink 1
+		drush vset stage_file_proxy_use_imagecache_root 0
 	fi
-}
-
-prepenv() {
-	drush dl adminimal_admin_menu
-	drush dl environment_indicator
-	drush dl token_tweaks
-	drushit
 }
 
 pdl() {
@@ -45,9 +34,5 @@ pdl() {
     fi
 }
 
-pool-rebuild() {
-	drush sql-drop -y && drush site-install pool -y --db-url="mysql://pool:pool@localhost/appno_pool" --site-name="Swimmingpool" --account-name="admin" --account-pass="admin" --account-mail="javiertroya@appnovation.com" --notify && drush en -y devel devel_generate module_filter dblog views_ui field_ui diff && drush uli --uri="http://local.swimmingpool.com"
-}
-
 alias call='drush cc all'
-alias start-dev='drush en -y module_filter devel diff'
+alias start-dev='drush en -y module_filter devel devel_generate diff dblog views_ui field_ui log_filter filter_perms environment_indicator adminimal_admin_menu'
